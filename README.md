@@ -3,6 +3,8 @@ Challenge for two players!!
 
 * Start new game
 POST http://localhost:{port}/api/game/
+
+Body message:
 {
     id:0,
     x:0,
@@ -18,6 +20,7 @@ In order to continue an actual game, POST again with same id number, but a diffe
 If you want the machine begins the game, just POST with id value. Just like this:
 
 POST http://localhost:{port}/api/game/
+Body message:
 {
     id:0
 }
