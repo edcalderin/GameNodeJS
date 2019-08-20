@@ -21,12 +21,15 @@ POST http://localhost:{port}/api/game/
 {
     id:0
 }
+
 Next, you will contine playing by specifying both coordinates.
 When the game ends, API will show the winner through "winner" attribute of JSON object response.
 
 * You can create as many games as be possible, you can see all games like this:
+
 GET http://localhost:{port}/api/game/
 
 * Also, you can get details about a particular game:
+
 GET http://localhost:{port}/api/game/{id}
 
