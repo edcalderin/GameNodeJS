@@ -40,14 +40,13 @@ class Logic {
         var x = Math.floor(Math.random() * 3)
         var y = Math.floor(Math.random() * 3)
         while (!valide) {
-            console.log('x=' + x + ' y=' + y)
             if (this.isEmptyPosition(actual_game.board, x, y)) {
                 actual_game.board[x][y] = 'X'
                 valide = true
             }
             else {
-                x = Math.floor(Math.random() * 2)
-                y = Math.floor(Math.random() * 2)
+                x = Math.floor(Math.random() * 3)
+                y = Math.floor(Math.random() * 3)
             }
         }
         return actual_game
@@ -56,88 +55,94 @@ class Logic {
     findByRowOrColumn(actual_game, type_search, x, y, symbol) {
         var count = 0
         for (let i = 0; i < 3; i++) {
-            if (type_search == 'row') {
-                if (actual_game.board[x][i] == symbol) {
-                    count++
-                }
-                else return;
-            }
-            else if (type_search == 'column') {
-                if (actual_game.board[i][y] == symbol) {
-                    count++
-                }
-                else return;
-            }
+            if (type_search == 'row' && actual_game.board[x][i] == symbol) count++
+            else if (type_search == 'column' && actual_game.board[i][y] == symbol) count++
+            else break;
         }
+        var winner = ''
         if (count == 3) {
-            actual_game.winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
+            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
         }
-        return actual_game.winner
+        return winner
     }
 
-    diagonalDerToIzq(actual_game, symbol) {
+    diagonalRightToLeft(actual_game, symbol) {
         var count = 0
-        for (let i = 0; i < 2; i++) {
-            if (actual_game.board[i, 2 - i] == symbol)
-                count++
-            else return;
+        for (let i = 0; i < 3; i++) {
+            if (actual_game.board[i, 2 - i] == symbol) count++
+            else break
         }
+        var winner = ''
         if (count == 3) {
-            actual_game.winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
+            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
+            console.log('winnner ', winner)
+            console.log('symbol ', symbol)
         }
-        return actual_game.winner
+        return winner
     }
 
-    diagonalIzqToDer(actual_game, symbol) {
+    diagonalLeftToRight(actual_game, symbol) {
         var count = 0
         for (let i = 0; i < 3; i++) {
             if (actual_game.board[i][i] == symbol) {
                 count++
             }
-            else return;
+            else break;
         }
+        var winner = ''
         if (count == 3) {
-            actual_game.winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
+            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
+            console.log('winnner ', actual_game.winner)
+            console.log('symbol ', symbol)
         }
+        return winner
     }
 
     findWinner(actual_game, x, y, symbol) {
         var countByRow = this.findByRowOrColumn(actual_game, 'row', x, y, symbol)
         var countByColumn = this.findByRowOrColumn(actual_game, 'column', x, y, symbol)
-        var countByDiaIzqToDer = null
-        var countByDiaDerToIzq = null
+        var countByDiagLeftToRight = ''
+        var countByDiagRightToLeft = ''
+
         if (x == y) {
-            countByDiaIzqToDer = this.diagonalIzqToDer(actual_game, symbol)
+            countByDiagLeftToRight = this.diagonalLeftToRight(actual_game, symbol)
+            console.log('countByDiagLeftToRight', countByDiagLeftToRight)
         }
         if ((x == 0 && y == 2) || (x == 2 && y == 0) || (x == 1 && y == 1)) {
-            countByDiaDerToIzq = this.diagonalDerToIzq(actual_game)
+            countByDiagRightToLeft = this.diagonalRightToLeft(actual_game)
+            console.log('countByDiagRightToLeft', countByDiagRightToLeft)
         }
-        if (countByRow == '' && countByColumn == '' && countByDiaIzqToDer == '' && countByDiaDerToIzq == '') {
+        if (countByRow == '' && countByColumn == '' && countByDiagLeftToRight == '' && countByDiagRightToLeft == '') {
             if (this.isFullBoard(actual_game.board)) {
                 return actual_game.winner = enum_winner_type.Draw
             }
             else
                 return actual_game
         }
+        else if (typeof (countByRow) == typeof (enum_winner_type))
+            actual_game.winner = countByRow
+        else if (typeof (countByColumn) == typeof (enum_winner_type))
+            actual_game.winner = countByRow
+        else if (typeof (countByDiagLeftToRight) == typeof (enum_winner_type))
+            actual_game.winner = countByDiagLeftToRight
+        else if (typeof (countByDiagRightToLeft) == typeof (enum_winner_type))
+            actual_game.winner = countByDiagRightToLeft
         return actual_game
-
     }
 
     isFullBoard(board) {
-        var isFull = false
+        var isFull = true
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                if (board[i][i] != '')
-                    isFull = true
-                else {
+                if (board[i][j] == '') {
                     isFull = false
-                    return;
+                    break;
                 }
             }
         }
-        return isFull
+        return isFull;
     }
-    
+
     isEmptyPosition(board, x, y) {
         return board[x][y] == ''
     }
@@ -145,9 +150,11 @@ class Logic {
     continuePlaying(actual_game, x, y) {
         if (this.isEmptyPosition(actual_game.board, x, y)) {
             actual_game.board[x][y] = 'O'
-            var winner = this.findWinner(actual_game, x, y, 'O')
-            this.machinePlays(actual_game)
-            winner = this.findWinner(actual_game, x, y, 'X')
+            this.findWinner(actual_game, x, y, 'O')
+            if (!this.isFullBoard(actual_game.board)) {
+                this.machinePlays(actual_game)
+                this.findWinner(actual_game, x, y, 'X')
+            }
             return actual_game
         }
         else return 'Choose another position'
