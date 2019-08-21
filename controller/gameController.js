@@ -27,6 +27,9 @@ function getGameById(req, res) {
     if (game) return res.json(game)
     else res.status(404).send('Game not found')
 }
+
 module.exports = {
-    playGame, getAllGames, getGameById
+    playGame,
+    getAllGames,
+    getGameById
 }
