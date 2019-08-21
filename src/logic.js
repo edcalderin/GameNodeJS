@@ -121,11 +121,18 @@ class Logic {
     isEmptyPosition(board, x, y) {
         return board[x][y] == ''
     }
+    getDuration(time_start, time_end) {
+        return (time_end - time_start) / 1000
+    }
     checkWinner(actual_game, symbol, winner) {
-        if (this.isWinner(actual_game.board, symbol))
+        if (this.isWinner(actual_game.board, symbol)) {
             actual_game.winner = winner
-        else if (this.isFullBoard(actual_game.board))
+            actual_game.time_tracked_seconds = this.getDuration(actual_game.time_start, new Date().getTime())
+        }
+        else if (this.isFullBoard(actual_game.board)) {
             actual_game.winner = enum_winner_type.Draw
+            actual_game.time_tracked_seconds = this.getDuration(actual_game.time_start, new Date().getTime())
+        }
     }
     continuePlaying(actual_game, x, y) {
         if (actual_game.winner == '') {
