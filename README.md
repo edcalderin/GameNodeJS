@@ -15,7 +15,7 @@ Body message:
 - x: Coordinate x for game board
 - y: Coordinate y for game board
 
-API will return a json object with full data about the game, you will notice your move with "O" symbol in "board" property, Machine move will be set with "X" symbol. API will validate whether both x and y coordinates are between 0 and 2 (e.g. (x,y)>=0 and (x,y)<=2), therefore It will valide integers values.
+API will return a json object with full data about the game, you will notice your move with "O" symbol in "board" property, Machine move will be set with "X" symbol. API will validate whether both x and y coordinates are between 0 and 2 (e.g. (x,y)>=0 and (x,y)<=2), in addition, It will valide integers values.
 In order to continue an actual game, request with POST method again with same id, but now a different position. If you send same coordinate then you will get an error message.
 
 If you want the machine begins the game, just send id value into body message. Just like this:
