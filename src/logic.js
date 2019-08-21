@@ -28,7 +28,6 @@ class Logic {
         return actual_game
     }
     searchGame(id) {
-        //console.log(games.length)
         var found = this.games.find(g => g.id == id)
         return found
     }
@@ -59,7 +58,6 @@ class Logic {
         }
         return result
     }
-
     findWinnerDiagLeftToRight(board, symbol) {
         let result = false
         for (let i = 0; i < 3; i++) {
@@ -130,7 +128,7 @@ class Logic {
                 if (this.isWinner(actual_game.board, 'O')) {
                     actual_game.winner = enum_winner_type.Human
                 }
-                if (!this.isFullBoard(actual_game.board)) {
+                if (!this.isFullBoard(actual_game.board) && actual_game.winner == '') {
                     this.machinePlays(actual_game)
                     if (this.isWinner(actual_game.board, 'X')) {
                         actual_game.winner = enum_winner_type.Machine
