@@ -121,18 +121,20 @@ class Logic {
     isEmptyPosition(board, x, y) {
         return board[x][y] == ''
     }
+    checkWinner(actual_game, symbol, winner) {
+        if (this.isWinner(actual_game.board, symbol))
+            actual_game.winner = winner
+        else if (this.isFullBoard(actual_game.board))
+            actual_game.winner = enum_winner_type.Draw
+    }
     continuePlaying(actual_game, x, y) {
         if (actual_game.winner == '') {
             if (this.isEmptyPosition(actual_game.board, x, y)) {
                 actual_game.board[x][y] = 'O'
-                if (this.isWinner(actual_game.board, 'O')) {
-                    actual_game.winner = enum_winner_type.Human
-                }
+                this.checkWinner(actual_game, 'O', enum_winner_type.Human)
                 if (!this.isFullBoard(actual_game.board) && actual_game.winner == '') {
                     this.machinePlays(actual_game)
-                    if (this.isWinner(actual_game.board, 'X')) {
-                        actual_game.winner = enum_winner_type.Machine
-                    }
+                    this.checkWinner(actual_game, 'X', enum_winner_type.Machine)
                 }
                 return actual_game
             }
