@@ -22,7 +22,8 @@ class Logic {
             actual_game.board[x][y] = 'O'
             this.machinePlays(actual_game)
         }
-        else { this.machinePlays(actual_game) }
+        else
+            this.machinePlays(actual_game)
         this.games.push(actual_game)
         return actual_game
     }
@@ -50,7 +51,7 @@ class Logic {
     findWinnerDiagRightToLeft(board, symbol) {
         var result = false
         for (let i = 0; i < 3; i++) {
-            if (board[i, 2 - i] == symbol) result = true
+            if (board[i][2 - i] == symbol) result = true
             else {
                 result = false
                 break
@@ -70,16 +71,19 @@ class Logic {
         }
         return result
     }
-    isWinner(actual_game, symbol) {
-        if (this.findWinnerDiagLeftToRight(actual_game.board, symbol) || this.findWinnerDiagRightToLeft(actual_game.board, symbol)) {
+    isWinner(board, symbol) {
+        if (this.findWinnerDiagLeftToRight(board, symbol) || this.findWinnerDiagRightToLeft(board, symbol)) {
             return true
         }
         else {
+            let winnerRow = false
+            let winnerColumn = false
             for (let i = 0; i < 3; i++) {
-                const winnerRow = this.findWinnerRow(actual_game, i, symbol)
-                const winnerColumn = this.findWinnerColumn(actual_game, i, symbol)
-                return (winnerRow || winnerColumn)
+                winnerRow = this.findWinnerRow(board, i, symbol)
+                winnerColumn = this.findWinnerColumn(board, i, symbol)
+                if (winnerRow || winnerColumn) break
             }
+            return (winnerRow || winnerColumn)
         }
     }
     isFullBoard(board) {
@@ -97,7 +101,7 @@ class Logic {
     findWinnerRow(board, row, symbol) {
         let result = false
         for (let j = 0; j < 3; j++) {
-            if (board[row, j] == symbol) result = true
+            if (board[row][j] == symbol) result = true
             else {
                 result = false
                 break
@@ -108,7 +112,7 @@ class Logic {
     findWinnerColumn(board, col, symbol) {
         let result = false
         for (let i = 0; i < 3; i++) {
-            if (board[i, col] == symbol) result = true
+            if (board[i][col] == symbol) result = true
             else {
                 result = false
                 break
@@ -123,12 +127,12 @@ class Logic {
         if (actual_game.winner == '') {
             if (this.isEmptyPosition(actual_game.board, x, y)) {
                 actual_game.board[x][y] = 'O'
-                if (this.isWinner(actual_game, 'O')) {
+                if (this.isWinner(actual_game.board, 'O')) {
                     actual_game.winner = enum_winner_type.Human
                 }
                 if (!this.isFullBoard(actual_game.board)) {
                     this.machinePlays(actual_game)
-                    if (this.isWinner(actual_game, 'X')) {
+                    if (this.isWinner(actual_game.board, 'X')) {
                         actual_game.winner = enum_winner_type.Machine
                     }
                 }
