@@ -150,5 +150,12 @@ class Logic {
     getGames() {
         return this.games
     }
+    deleteGame(id) {
+        this.games = this.games.filter(g => {
+            if (g.id != id)
+                return g
+        })
+        return this.games
+    }
 }
 module.exports = Logic

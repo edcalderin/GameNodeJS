@@ -9,7 +9,6 @@ function playGame(req, res) {
     else {
         const { id, x, y } = req.body
         const gameFound = Logic.searchGame(id)
-
         if (gameFound) {
             return res.send(Logic.continuePlaying(gameFound, x, y))
         } else {
@@ -27,9 +26,18 @@ function getGameById(req, res) {
     if (game) return res.json(game)
     else res.status(404).send('Game not found')
 }
+function deleteGameById(req, res) {
+    const { id } = req.params
+    const gameFound = Logic.searchGame(id)
+    if (gameFound)
+        return res.json(Logic.deleteGame(id))
+    else
+        return res.status(404).send(`Game not found`)
+}
 
 module.exports = {
     playGame,
     getAllGames,
-    getGameById
+    getGameById,
+    deleteGameById
 }

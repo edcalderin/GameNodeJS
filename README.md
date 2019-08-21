@@ -39,3 +39,7 @@ GET http://localhost:{port}/api/game/
 
 GET http://localhost:{port}/api/game/{id}
 
+* Finally, you can remove a specifyc game:
+
+DELETE http://localhost:{port}/api/game/{id}
+
