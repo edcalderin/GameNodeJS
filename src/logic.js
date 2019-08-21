@@ -5,7 +5,6 @@ class Logic {
     constructor() {
         this.games = []
     }
-
     initializeBoard(board) {
         for (let i = 0; i < 3; i++) {
             board[i] = new Array(3)
@@ -16,7 +15,6 @@ class Logic {
             };
         }
     }
-
     newGame(id, x, y) {
         const actual_game = new game(id, '', '')
         this.initializeBoard(actual_game.board)
@@ -26,15 +24,13 @@ class Logic {
         }
         else { this.machinePlays(actual_game) }
         this.games.push(actual_game)
-        return this.games
+        return actual_game
     }
-
     searchGame(id) {
         //console.log(games.length)
         var found = this.games.find(g => g.id == id)
         return found
     }
-
     machinePlays(actual_game) {
         var valide = false
         var x = Math.floor(Math.random() * 3)
@@ -51,85 +47,41 @@ class Logic {
         }
         return actual_game
     }
-
-    findByRowOrColumn(actual_game, type_search, x, y, symbol) {
-        var count = 0
+    findWinnerDiagRightToLeft(board, symbol) {
+        var result = false
         for (let i = 0; i < 3; i++) {
-            if (type_search == 'row' && actual_game.board[x][i] == symbol) count++
-            else if (type_search == 'column' && actual_game.board[i][y] == symbol) count++
-            else break;
-        }
-        var winner = ''
-        if (count == 3) {
-            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
-        }
-        return winner
-    }
-
-    diagonalRightToLeft(actual_game, symbol) {
-        var count = 0
-        for (let i = 0; i < 3; i++) {
-            if (actual_game.board[i, 2 - i] == symbol) count++
-            else break
-        }
-        var winner = ''
-        if (count == 3) {
-            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
-            console.log('winnner ', winner)
-            console.log('symbol ', symbol)
-        }
-        return winner
-    }
-
-    diagonalLeftToRight(actual_game, symbol) {
-        var count = 0
-        for (let i = 0; i < 3; i++) {
-            if (actual_game.board[i][i] == symbol) {
-                count++
+            if (board[i, 2 - i] == symbol) result = true
+            else {
+                result = false
+                break
             }
-            else break;
         }
-        var winner = ''
-        if (count == 3) {
-            winner = (symbol == 'O') ? enum_winner_type.Human : enum_winner_type.Machine
-            console.log('winnner ', actual_game.winner)
-            console.log('symbol ', symbol)
-        }
-        return winner
+        return result
     }
 
-    findWinner(actual_game, x, y, symbol) {
-        var countByRow = this.findByRowOrColumn(actual_game, 'row', x, y, symbol)
-        var countByColumn = this.findByRowOrColumn(actual_game, 'column', x, y, symbol)
-        var countByDiagLeftToRight = ''
-        var countByDiagRightToLeft = ''
-
-        if (x == y) {
-            countByDiagLeftToRight = this.diagonalLeftToRight(actual_game, symbol)
-            console.log('countByDiagLeftToRight', countByDiagLeftToRight)
-        }
-        if ((x == 0 && y == 2) || (x == 2 && y == 0) || (x == 1 && y == 1)) {
-            countByDiagRightToLeft = this.diagonalRightToLeft(actual_game)
-            console.log('countByDiagRightToLeft', countByDiagRightToLeft)
-        }
-        if (countByRow == '' && countByColumn == '' && countByDiagLeftToRight == '' && countByDiagRightToLeft == '') {
-            if (this.isFullBoard(actual_game.board)) {
-                return actual_game.winner = enum_winner_type.Draw
+    findWinnerDiagLeftToRight(board, symbol) {
+        let result = false
+        for (let i = 0; i < 3; i++) {
+            if (board[i][i] == symbol) result = true
+            else {
+                result = false
+                break
             }
-            else
-                return actual_game
         }
-        else if (typeof (countByRow) == typeof (enum_winner_type))
-            actual_game.winner = countByRow
-        else if (typeof (countByColumn) == typeof (enum_winner_type))
-            actual_game.winner = countByRow
-        else if (typeof (countByDiagLeftToRight) == typeof (enum_winner_type))
-            actual_game.winner = countByDiagLeftToRight
-        else if (typeof (countByDiagRightToLeft) == typeof (enum_winner_type))
-            actual_game.winner = countByDiagRightToLeft
-        return actual_game
+        return result
     }
-
+    isWinner(actual_game, symbol) {
+        if (this.findWinnerDiagLeftToRight(actual_game.board, symbol) || this.findWinnerDiagRightToLeft(actual_game.board, symbol)) {
+            return true
+        }
+        else {
+            for (let i = 0; i < 3; i++) {
+                const winnerRow = this.findWinnerRow(actual_game, i, symbol)
+                const winnerColumn = this.findWinnerColumn(actual_game, i, symbol)
+                return (winnerRow || winnerColumn)
+            }
+        }
+    }
     isFullBoard(board) {
         var isFull = true
         for (let i = 0; i < 3; i++) {
@@ -142,24 +94,55 @@ class Logic {
         }
         return isFull;
     }
-
+    findWinnerRow(board, row, symbol) {
+        let result = false
+        for (let j = 0; j < 3; j++) {
+            if (board[row, j] == symbol) result = true
+            else {
+                result = false
+                break
+            }
+        }
+        return result
+    }
+    findWinnerColumn(board, col, symbol) {
+        let result = false
+        for (let i = 0; i < 3; i++) {
+            if (board[i, col] == symbol) result = true
+            else {
+                result = false
+                break
+            }
+        }
+        return result
+    }
     isEmptyPosition(board, x, y) {
         return board[x][y] == ''
     }
-
     continuePlaying(actual_game, x, y) {
-        if (this.isEmptyPosition(actual_game.board, x, y)) {
-            actual_game.board[x][y] = 'O'
-            this.findWinner(actual_game, x, y, 'O')
-            if (!this.isFullBoard(actual_game.board)) {
-                this.machinePlays(actual_game)
-                this.findWinner(actual_game, x, y, 'X')
+        if (actual_game.winner == '') {
+            if (this.isEmptyPosition(actual_game.board, x, y)) {
+                actual_game.board[x][y] = 'O'
+                if (this.isWinner(actual_game, 'O')) {
+                    actual_game.winner = enum_winner_type.Human
+                }
+                if (!this.isFullBoard(actual_game.board)) {
+                    this.machinePlays(actual_game)
+                    if (this.isWinner(actual_game, 'X')) {
+                        actual_game.winner = enum_winner_type.Machine
+                    }
+                }
+                return actual_game
             }
-            return actual_game
+            else return 'Choose another position'
         }
-        else return 'Choose another position'
+        else {
+            let result_game = `Game over! ${actual_game.winner} wins`
+            if (actual_game.winner == enum_winner_type.Draw)
+                result_game = `Drawn game`
+            return result_game
+        }
     }
-
     getGames() {
         return this.games
     }
